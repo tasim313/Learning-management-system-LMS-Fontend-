@@ -1,9 +1,12 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios  from "axios";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
+import { IconBadge } from "@/components/icon-badge";
+import { LayoutDashboard } from "lucide-react";
+import TitleForm from "./_components/title-form";
 
 
 const CourseIdPage = ({
@@ -12,7 +15,7 @@ const CourseIdPage = ({
     params: {courseId: string}
 }) => {
 
-
+    const router = useRouter();
     const [Course, setCourse] = useState<any>(null)
     const [completionStatus, setCompletionStatus] = useState({
         totalFields: 0,
@@ -34,7 +37,7 @@ const CourseIdPage = ({
                 },
               }
             );
-            setCourse(courseData);
+            setCourse(courseData[0]);
 
             // Calculate completion status
             const requiredFields = [
@@ -46,10 +49,12 @@ const CourseIdPage = ({
               ];
 
             const totalFields = requiredFields.length
-            const completedFields = requiredFields.filter(Boolean).length;
+            const completedFields = requiredFields.filter(
+              field => field !== null && field !== undefined
+            ).length;
             const completionText = `(${completedFields}/${totalFields})`;
-            const isComplete = requiredFields.every(Boolean);
-
+            const isComplete = completedFields === totalFields;
+    
             setCompletionStatus({
                 totalFields,
                 completedFields,
@@ -59,7 +64,7 @@ const CourseIdPage = ({
       
           } catch (error) {
             if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
-                return redirect("/")
+              router.push("/")
             } else {
               toast.error("Something went wrong");
             }
@@ -85,6 +90,17 @@ const CourseIdPage = ({
                         Complete all fields {completionStatus.completionText}
                     </span>
                 </div>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+                    <div>
+                      <div className="flex items-center gap-x-2">
+                            <IconBadge icon={LayoutDashboard}/>
+                            <h2 className="text-xl">
+                              Customized Your Course
+                            </h2>
+                      </div>
+                      <TitleForm initialData={Course} courseId={Course?.uid}/>
+                    </div>
                </div>
             </div>
         </>
