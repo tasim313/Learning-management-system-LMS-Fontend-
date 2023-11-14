@@ -4,6 +4,7 @@ import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import {
 
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface TitleFormProps{
     initialData : {
@@ -42,6 +44,8 @@ const TitleForm = ({
 
     const toggleEdit = () => setIsEditing((current) => !current)
 
+    const router = useRouter()
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: initialData,
@@ -55,7 +59,19 @@ const TitleForm = ({
 
     
     const onSubmit  = async(values: z.infer<typeof formSchema>) =>{
-        console.log(values);
+        try {
+            await axios.patch(`http://127.0.0.1:8000/${courseId}/`, values, {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+              )
+            toast.success("Course Updated");
+            toggleEdit();
+            router.refresh();
+        } catch (error) {
+            toast.error("Something went wrong !")
+        }
     }
 
     return(
@@ -98,9 +114,15 @@ const TitleForm = ({
                                     
                                     />
                                 </FormControl>
+                                <FormMessage />
                             </FormItem>
                           )}
                           />
+                          <div className="flex items-center gap-x-2">
+                              <Button disabled={!isValid || isSubmitting} type="submit">
+                                Save
+                              </Button>
+                          </div>
                         </form>
                     </Form>
                 )
