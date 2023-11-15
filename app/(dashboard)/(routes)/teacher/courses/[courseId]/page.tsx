@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { IconBadge } from "@/components/icon-badge";
 import { LayoutDashboard } from "lucide-react";
 import TitleForm from "./_components/title-form";
+import DescriptionForm from "./_components/description-form";
 
 
 const CourseIdPage = ({
@@ -100,6 +101,7 @@ const CourseIdPage = ({
                             </h2>
                       </div>
                       <TitleForm initialData={Course} courseId={Course?.uid}/>
+                      <DescriptionForm initialData={Course} courseId={Course?.uid}/>
                     </div>
                </div>
             </div>
