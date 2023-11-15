@@ -69,6 +69,7 @@ const TitleForm = ({
             toast.success("Course Updated");
             toggleEdit();
             router.refresh();
+            window.location.reload();
         } catch (error) {
             toast.error("Something went wrong !")
         }
