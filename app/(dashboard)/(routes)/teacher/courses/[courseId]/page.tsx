@@ -19,6 +19,7 @@ const CourseIdPage = ({
 
     const router = useRouter();
     const [Course, setCourse] = useState<any>(null)
+    const [Category, setCategory] = useState<any>(null)
     const [completionStatus, setCompletionStatus] = useState({
         totalFields: 0,
         completedFields: 0,
@@ -76,7 +77,35 @@ const CourseIdPage = ({
         fetchData();
       }, [params.courseId]);
     
-    console.log("Course", Course)
+    
+      useEffect(() => {
+        const fetchData = async () => {
+         
+          try {
+            const { data: categoryData } = await axios.get(
+              `http://127.0.0.1:8000/category/`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            setCategory(categoryData);
+      
+          } catch (error) {
+            if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
+              router.push("/")
+            } else {
+              toast.error("Something went wrong");
+            }
+          }
+        };
+    
+        fetchData();
+      }, []);
+
+
+    console.log("Category", Category)
 
 
 
