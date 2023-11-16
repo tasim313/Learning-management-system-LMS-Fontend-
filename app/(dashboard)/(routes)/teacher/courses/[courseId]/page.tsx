@@ -9,6 +9,7 @@ import { LayoutDashboard } from "lucide-react";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
+import CategoryForm from "./_components/category-form";
 
 
 const CourseIdPage = ({
@@ -19,7 +20,7 @@ const CourseIdPage = ({
 
     const router = useRouter();
     const [Course, setCourse] = useState<any>(null)
-    const [Category, setCategory] = useState<any>(null)
+    const [Categories, setCategory] = useState<any>(null)
     const [completionStatus, setCompletionStatus] = useState({
         totalFields: 0,
         completedFields: 0,
@@ -105,7 +106,7 @@ const CourseIdPage = ({
       }, []);
 
 
-    console.log("Category", Category)
+    console.log("Category", Categories)
 
 
 
@@ -133,6 +134,15 @@ const CourseIdPage = ({
                       <TitleForm initialData={Course} courseId={Course?.uid}/>
                       <DescriptionForm initialData={Course} courseId={Course?.uid}/>
                       <ImageForm initialData={Course} courseId={Course?.uid}/>
+                      <CategoryForm
+                        initialData={Course}
+                        courseId={Course?.uid}
+                        options={Categories?.map((category) => ({
+                          label: category.name,
+                          value: category.uid
+                        }))}
+                      />
+
                     </div>
                </div>
             </div>
