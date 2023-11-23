@@ -114,7 +114,7 @@ const CourseIdPage = ({
          
           try {
             const { data: attachmentData } = await axios.get(
-              `http://127.0.0.1:8000/attachment/?courseInfo__uid=${params.courseId}`,
+              `http://127.0.0.1:8000/attachment/list/?courseInfo__uid=${params.courseId}`,
               {
                 headers: {
                   'Content-Type': 'application/json',

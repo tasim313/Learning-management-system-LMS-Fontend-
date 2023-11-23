@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
-import { PlusCircle, File, Loader2 } from 'lucide-react';
+import { PlusCircle, File, Loader2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -69,7 +69,27 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
       toast.error('Something went wrong');
     }
   };
+  
 
+  const onDelete = async () => {
+    try {
+      const uid = initialData[0].uid
+      setDeletingId(uid);
+      await axios.delete(`http://127.0.0.1:8000/attachment/${uid}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+      );
+      toast.success("Attachment deleted");
+      router.refresh();
+      window.location.reload();
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   
 
@@ -113,7 +133,22 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
                     alt="Attachment"
                     className="h-4 w-4 mr-2 flex-shrink-0"
                   />
+                  
                 )}
+
+                {deletingId === initialData[0].uid && (
+                    <div>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </div>
+                  )}
+                  {deletingId !== initialData[0].uid && (
+                    <button
+                      onClick={() => onDelete(initialData[0].uid)}
+                      className="ml-auto hover:opacity-75 transition"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
               </div>
             )}
           </>
