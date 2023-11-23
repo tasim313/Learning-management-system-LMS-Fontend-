@@ -33,6 +33,12 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
     maxFiles: 1,
   });
 
+  const isSupportedFileType = (fileName) => {
+    const supportedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+    const extension = fileName.toLowerCase().slice((fileName.lastIndexOf(".") - 1 >>> 0) + 2);
+    return supportedExtensions.includes(`.${extension}`);
+  };
+
   const toggleEdit = () => setIsEditing((current) => !current);
   const router = useRouter();
 
@@ -63,6 +69,10 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
       toast.error('Something went wrong');
     }
   };
+
+
+  
+
   
 
   return (
@@ -81,30 +91,36 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
         </Button>
       </div>
       {!isEditing && (
-        <>
-          {initialData?.attachments?.length === 0 && (
-            <p className="text-sm mt-2 text-slate-500 italic">No attachments yet</p>
-          )}
-          {initialData?.attachments?.length > 0 && (
-            <div className="space-y-2">
-              {initialData?.attachments.map((attachment) => (
-                <div
-                  key={attachment.uid}
-                  className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
-                >
-                  <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <p className="text-xs line-clamp-1">{attachment.name}</p>
-                  {deletingId === attachment.uid && (
-                    <div>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </>
+          <>
+            {(!initialData || initialData.length === 0 || !initialData[0]?.file) && (
+                  <p className="text-sm mt-2 text-slate-500 italic">No attachments yet</p>
+            )}
+            {initialData && initialData[0]?.file && (
+              <div className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md">
+                <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                {isSupportedFileType(initialData[0].file) ? (
+                  <a
+                    href={initialData[0].file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs line-clamp-1"
+                  >
+                    View File
+                  </a>
+                ) : (
+                  <img
+                    src={initialData[0].file}
+                    alt="Attachment"
+                    className="h-4 w-4 mr-2 flex-shrink-0"
+                  />
+                )}
+              </div>
+            )}
+          </>
       )}
+
+
+
       {isEditing && (
         <div>
           <div

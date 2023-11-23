@@ -23,6 +23,7 @@ const CourseIdPage = ({
     const router = useRouter();
     const [Course, setCourse] = useState<any>(null)
     const [Categories, setCategory] = useState<any>(null)
+    const [Attachment, setAttachment] = useState<any>(null)
     const [completionStatus, setCompletionStatus] = useState({
         totalFields: 0,
         completedFields: 0,
@@ -108,8 +109,31 @@ const CourseIdPage = ({
       }, []);
 
 
-    console.log("Category", Categories)
-
+      useEffect(() => {
+        const fetchData = async () => {
+         
+          try {
+            const { data: attachmentData } = await axios.get(
+              `http://127.0.0.1:8000/attachment/?courseInfo__uid=${params.courseId}`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            setAttachment(attachmentData);
+      
+          } catch (error) {
+            if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
+              router.push("/")
+            } else {
+              toast.error("Something went wrong");
+            }
+          }
+        };
+    
+        fetchData();
+      }, []);
 
 
     return ( 
@@ -170,7 +194,7 @@ const CourseIdPage = ({
                                 <IconBadge icon={File}/>
                                 <h2 className="text-xl">Resources & Attachments</h2>
                             </div>
-                            <AttachmentForm initialData={Course} courseId={Course?.uid}/>
+                            <AttachmentForm initialData={Attachment} courseId={Course?.uid}/>
                       </div>
                     </div>
                </div>
